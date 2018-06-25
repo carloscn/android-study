@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TextViewActivity">
+
+    <TextView
+        android:id="@+id/tv_1"
+        android:layout_width="wrap_content"
+        android:layout_height="41dp"
+        android:text="@string/tv_test1"
+        android:textColorLink="#0000"
+        android:textSize="28sp"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="119dp"
+        tools:ignore="MissingConstraints" />
+</android.support.constraint.ConstraintLayout>

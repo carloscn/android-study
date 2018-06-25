@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="50dp">
+
+    <RadioGroup
+        android:id="@+id/rg_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+
+        <RadioButton
+            android:id="@+id/rb_1_male"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="male"
+            android:textSize="22dp"
+            android:checked="true"
+            android:textColor="#ff6600"
+            />
+        <RadioButton
+            android:id="@+id/rb_1_female"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="female"
+            android:textSize="22dp"
+            />
+    </RadioGroup>
+
+
+    <RadioGroup
+        android:id="@+id/rg_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/rg_1"
+        android:paddingTop="15dp"
+        >
+
+
+        <RadioButton
+            android:id="@+id/rb_2_male"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:button="@null"
+            android:checked="true"
+            android:text="male"
+            android:background="@drawable/bg_selector_orange"
+            android:textSize="22dp" />
+
+        <RadioButton
+            android:id="@+id/rb_2_female"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:button="@null"
+            android:text="female"
+            android:textSize="22dp"
+            android:background="@drawable/bg_selector_orange"
+
+            />
+
+    </RadioGroup>
+
+</RelativeLayout>
