@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_bluelist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="Bluetooth List:"
+            android:textColor="#000"
+            android:textSize="15dp"
+            />
+        <ListView
+            android:id="@+id/lv_bluelist"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:paddingTop="1dp"
+            android:layout_marginTop="5dp">
+        </ListView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Recv display:"
+            android:textColor="#000"
+            android:textSize="15dp"
+            android:layout_marginTop="5dp"
+            />
+
+        <TextureView
+            android:id="@+id/tv_recv"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginTop="5dp"
+
+            />
+        <TextureView
+            android:id="@+id/tv_send"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginTop="5dp"
+
+            />
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="10dp"
+                >
+                <Button
+                    android:id="@+id/btn_send"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Send" />
+
+                <Button
+                    android:id="@+id/btn_disconnect"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Disconnect" />
+
+                <Button
+                    android:id="@+id/btn_scan"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Scan Device" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="10dp"
+                >
+                <Button
+                    android:id="@+id/btn_clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clear" />
+
+                <Button
+                    android:id="@+id/btn_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open" />
+
+                <Button
+                    android:id="@+id/btn_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Close" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

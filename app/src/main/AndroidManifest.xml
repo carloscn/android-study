@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mltbns.root.delvisapp">
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,7 +24,9 @@
         <activity android:name=".TextViewActivity" />
         <activity android:name=".EditViewActivity" />
         <activity android:name=".RadioButtonActivity" />
-        <activity android:name=".CheckBoxActivity"></activity>
+        <activity android:name=".CheckBoxActivity" />
+        <activity android:name=".BluetoothBleActivity" />
+        <activity android:name=".BluetoothDeviceAdapter"></activity>
     </application>
 
 </manifest>
