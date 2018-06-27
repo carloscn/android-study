@@ -34,19 +34,29 @@
             android:layout_marginTop="5dp"
             />
 
-        <TextureView
+        <TextView
             android:id="@+id/tv_recv"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:layout_marginTop="5dp"
+            android:textColor="#000"
 
             />
-        <TextureView
-            android:id="@+id/tv_send"
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="16dp"
+            android:layout_height="wrap_content"
+            android:text="Send:"
+            android:textColor="#000"
+            android:textSize="15dp"
             android:layout_marginTop="5dp"
-
+            />
+        <EditText
+            android:id="@+id/et_send"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:textColor="#000"
+            android:textSize="12dp"
             />
         <TableLayout
             android:layout_width="match_parent"

@@ -2,6 +2,8 @@ package com.mltbns.root.delvisapp;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.util.ArrayList;
@@ -86,7 +88,16 @@ public class BluetoothDeviceAdapter extends BaseAdapter {
         } else {
             viewHolder.deviceName.setText("未知设备");
         }
+        if( device.getBondState() == BluetoothDevice.BOND_BONDED ) {
+            viewHolder.deviceName.setTextColor(Color.rgb(75,0,130));
+
+        }else{
+            viewHolder.deviceName.setTextColor(Color.rgb(47,79,79));
+        }
+
         viewHolder.deviceAddress.setText(device.getAddress());
+
+
 
         return view;
     }

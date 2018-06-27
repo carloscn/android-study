@@ -1,5 +1,13 @@
 package com.mltbns.root.delvisapp;
 
+/*
+* https://blog.csdn.net/zw1996/article/details/75168742
+*https://www.2cto.com/kf/201707/659553.html
+*https://blog.csdn.net/a1054751988/article/details/51054441
+*https://blog.csdn.net/qq_35414804/article/details/53352205
+* https://blog.csdn.net/Small_Lee/article/details/50899743
+* */
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.ListActivity;
@@ -12,25 +20,31 @@ import android.content.IntentFilter;
 import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.icu.text.SymbolTable;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.provider.SyncStateContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,6 +53,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -50,6 +65,7 @@ import java.util.UUID;
 
 public class BluetoothBleActivity extends AppCompatActivity {
 
+    private Toast   mToast;
     private Button mBtnSend;
     private Button mBtnDisconnect;
     private Button mBtnScan;
@@ -63,9 +79,13 @@ public class BluetoothBleActivity extends AppCompatActivity {
     private BluetoothDeviceAdapter mBluetoothDeviceAdapter;
     private OutputStream outStream = null;
     private InputStream inStream = null;
-
+    private ConnectThread connectThread;
+    private ConnectedThread connectedThread;
+    private BluetoothSocket socket;
     private List<BluetoothDevice> mBlueList = new ArrayList<>();
     private Context context;
+    private Handler mUIHandler = new MyHandler();
+    private EditText    mEditText;
 
 
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -88,7 +108,8 @@ public class BluetoothBleActivity extends AppCompatActivity {
         mBtnClose   =   findViewById(R.id.btn_close);
         mBtnOpen    =   findViewById(R.id.btn_open);
         mLvDeviceList = findViewById(R.id.lv_bluelist);
-
+        mTextView   =   findViewById(R.id.tv_recv);
+        mEditText   =   findViewById(R.id.et_send);
         setListener();
 
         /*
@@ -139,7 +160,9 @@ public class BluetoothBleActivity extends AppCompatActivity {
         System.out.println("the bluetooth device is register receiver...");
 
 
-
+        /*
+        * Add viewList click event. click to connect the remote bluetooth.
+        * */
         mLvDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 
@@ -151,7 +174,35 @@ public class BluetoothBleActivity extends AppCompatActivity {
                 if (mBluetoothAdapter.isDiscovering()) {
                     mBluetoothAdapter.cancelDiscovery();
                 }
+                try {
+                    BluetoothDevice device = mBluetoothDeviceAdapter.getDevice(position);
+                    Boolean returnValue = false;
+                    Method createBondMethod;
+                    if(device.getBondState() == BluetoothDevice.BOND_NONE) {
+                        // 反射方法调用；
+                        System.out.println("choose a band none device.");
+                        createBondMethod = BluetoothDevice.class .getMethod("createBond");
+                        System.out.println("开始配对");
+                        returnValue = (Boolean) createBondMethod.invoke(device);
+                        //mLeDeviceListAdapter_isConnect.notifyDataSetChanged();
+                        Toast.makeText(BluetoothBleActivity.this, "点击设备是"+ device.getName() + "   " + device.getAddress(), Toast.LENGTH_LONG).show() ;
+                    }else if(device.getBondState() == BluetoothDevice.BOND_BONDED){
+                        System.out.println("choose a band device!!");
+                        connectThread = new ConnectThread(device, mBluetoothAdapter, mUIHandler);
+                        connectThread.start();
+                    }
+
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
             }
+
         });
 
 
@@ -200,20 +251,35 @@ public class BluetoothBleActivity extends AppCompatActivity {
                     mBtnClose.setEnabled(false);
                     break;
                 case R.id.btn_disconnect:
-
+                    connectThread.cancel();
+                    showToast("Bluetooth connection has been closed!");
+                    mLvDeviceList.setBackgroundColor(0);
+                    mLvDeviceList.setEnabled(true);
                     break;
                 case R.id.btn_scan:
-                    String s_info;
+                    /*
+                    * Clear the list items.
+                    * */
+                    mBluetoothDeviceAdapter.clear();
+                    mBluetoothDeviceAdapter.notifyDataSetChanged();
+                    /*
+                    * If discovering so cancel discovery.
+                    * */
                     if(mBluetoothAdapter.isDiscovering()){
                         mBluetoothAdapter.cancelDiscovery();
                     }
+
+                    /*
+                    * find other bluetooth device.
+                    * */
                     mBluetoothAdapter.startDiscovery();
                     break;
                 case R.id.btn_send:
-
+                    String text = mEditText.getText().toString();
+                    connectThread.sendData( text.getBytes() );
                     break;
                 case R.id.btn_clear:
-
+                    mTextView.setText("");
                     break;
 
             }
@@ -229,6 +295,7 @@ public class BluetoothBleActivity extends AppCompatActivity {
         private String unpair_info;
         private String state_info;
 
+
         @Override
         public void onReceive(Context context, Intent intent ) {
 
@@ -240,7 +307,7 @@ public class BluetoothBleActivity extends AppCompatActivity {
                 BluetoothDevice device = intent.getParcelableExtra( BluetoothDevice.EXTRA_DEVICE );
                 mLvDeviceList.setAdapter(mBluetoothDeviceAdapter);
                 System.out.println ( "SYSTEM: Find a device : " + device.getName() + " : " + device.getAddress()  );
-                // 扫描到设备则添加到适配器
+                // Scanned a device add to List
                 mBluetoothDeviceAdapter.addDevice(device);
                 // 数据改变并更新列表
                 mBluetoothDeviceAdapter.notifyDataSetChanged();
@@ -249,9 +316,6 @@ public class BluetoothBleActivity extends AppCompatActivity {
                 }else {
                     unpair_info = device.getAddress();
                 }
-
-
-
 
             }else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
                 System.out.println ( "SYSTEM: Discovery finished..."  );
@@ -277,11 +341,50 @@ public class BluetoothBleActivity extends AppCompatActivity {
             return state_info;
         }
     }
+    private void showToast(String text) {
 
-
-
-
-
-
+        if( mToast == null) {
+            mToast = Toast.makeText(this, text, Toast.LENGTH_LONG);
+        }
+        else {
+            mToast.setText(text);
+        }
+        mToast.show();
+    }
+    /**
+     * 处理消息
+     */
+    private class MyHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case Constant.MSG_START_LISTENING:
+                    setProgressBarIndeterminateVisibility(true);
+                    System.out.println("Start to listener...");
+                    break;
+                case Constant.MSG_FINISH_LISTENING:
+                    setProgressBarIndeterminateVisibility(false);
+                    System.out.println("stop listenner");
+                    break;
+                case Constant.MSG_GOT_DATA:
+                    mTextView.append(String.valueOf(msg.obj));
+                    System.out.println("data: "+String.valueOf(msg.obj));
+                    break;
+                case Constant.MSG_ERROR:
+                    System.out.println("error: "+String.valueOf(msg.obj));
+                    break;
+                case Constant.MSG_CONNECTED_TO_SERVER:
+                    System.out.println("Connected to Server");
+                    mLvDeviceList.setEnabled(false);
+                    mLvDeviceList.setBackgroundColor(Color.rgb(119,136,153));
+                    showToast("Bluetooth connection has been set up!");
+                    break;
+                case Constant.MSG_GOT_A_CLINET:
+                    System.out.println("Got a Client");
+                    break;
+            }
+        }
+    }
 
 }
